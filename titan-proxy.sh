@@ -9,7 +9,7 @@ NC='\033[0m' # 색상 초기화
 # 변수 정의
 PACKAGE_NAME="titan-edge_v0.1.20_246b9dd_linux-amd64.tar.gz"
 DIR_NAME="titan-edge_v0.1.20_246b9dd_linux-amd64"
-PROXY_FILE="$DIR_NAME/proxy.txt"  # DIR_NAME에 저장
+PROXY_FILE="proxy.txt"  # 기본 파일 이름
 
 # 1. 기존 패키지 삭제
 if [ -f "$PACKAGE_NAME" ]; then
@@ -28,22 +28,16 @@ tar -xzvf "$PACKAGE_NAME"
 # 4. 작업 폴더로 이동
 cd "$DIR_NAME" || { echo -e "${RED}디렉토리로 이동 실패${NC}"; exit 1; }
 
-# 5. 기존 작업 디렉토리 삭제
-if [ -d "$DIR_NAME" ]; then
-    echo -e "${YELLOW}기존 작업 디렉토리를 삭제합니다...${NC}"
-    rm -rf "$DIR_NAME"
-fi
-
-# 6. 권한 설정 및 파일 복사
+# 5. 권한 설정 및 파일 복사
 echo -e "${YELLOW}파일을 복사합니다...${NC}"
 sudo cp titan-edge /usr/local/bin
 sudo cp libgoworkerd.so /usr/local/lib
 
-# 7. 환경 변수 설정
+# 6. 환경 변수 설정
 echo -e "${YELLOW}환경 변수를 설정합니다...${NC}"
 export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/local/lib
 
-# 8. 프록시 목록 사용자 입력
+# 7. 프록시 목록 사용자 입력
 echo -e "${YELLOW}보유하신 모든 Proxy를 chatgpt에게 다음과 같은 형식으로 변환해달라고 하세요.${NC}"
 echo -e "${YELLOW}이러한 형태로 각 프록시를 한줄에 하나씩 입력하세요: http://username:password@proxy_host:port${NC}"
 echo -e "${YELLOW}프록시 입력 후 엔터를 두번 누르면 됩니다.${NC}"
@@ -58,7 +52,7 @@ while true; do
     echo "$proxy" >> "$PROXY_FILE"  # DIR_NAME 내에 저장
 done
 
-# 9. 프록시 목록 읽기
+# 8. 프록시 목록 읽기
 while IFS= read -r proxy; do
     echo -e "${YELLOW}프록시: ${proxy}를 사용하여 식별코드를 얻으세요:${NC}"
     echo -e "${YELLOW}해당 사이트에 방문하여 식별코드를 얻으세요: ${NC}"
@@ -67,11 +61,11 @@ while IFS= read -r proxy; do
     # 사용자로부터 식별 코드 입력 받기
     read -p "$(echo -e ${YELLOW}식별 코드를 입력하세요: ${NC})" identifier
     
-    # 10. 바인드 명령 실행
+    # 9. 바인드 명령 실행
     echo -e "${YELLOW}바인드 명령을 실행합니다...${NC}"
     titan-edge bind --hash="$identifier" https://api-test1.container1.titannet.io/api/v2/device/binding --proxy="$proxy"
 
-    # 11. 데몬 시작
+    # 10. 데몬 시작
     echo -e "${YELLOW}titan-edge 데몬을 시작합니다...${NC}"
     titan-edge daemon start --init --url https://cassini-locator.titannet.io:5000/rpc/v0 --proxy="$proxy"
 
