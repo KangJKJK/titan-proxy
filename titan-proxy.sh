@@ -9,7 +9,6 @@ NC='\033[0m' # 색상 초기화
 # 변수 정의
 PACKAGE_NAME="titan-edge_v0.1.20_246b9dd_linux-amd64.tar.gz"
 DIR_NAME="titan-edge_v0.1.20_246b9dd_linux-amd64"
-PROXY_FILE="$DIR_NAME/proxy.txt"  # proxy.txt 파일 경로
 
 # 1. 기존 패키지 삭제
 if [ -f "$PACKAGE_NAME" ]; then
@@ -43,17 +42,23 @@ echo -e "${YELLOW}이러한 형태로 각 프록시를 한줄에 하나씩 입�
 echo -e "${YELLOW}프록시 입력 후 엔터를 두번 누르면 됩니다.${NC}"
 
 # 프록시 목록을 proxy.txt 파일에 저장
-> "$PROXY_FILE" # 파일 초기화
+> proxy.txt # 파일 초기화
 while true; do
     read -r proxy
     if [ -z "$proxy" ]; then
         break
     fi
-    echo "$proxy" >> "$PROXY_FILE"  # DIR_NAME 내에 저장
+    echo "$proxy" >> proxy.txt
 done
 
-# 8. 프록시 목록 읽기
-while IFS= read -r proxy; do
+# 모든 프록시 처리
+for proxy in $(< proxy.txt); do
+    # 프록시가 비어있으면 넘어감
+    if [ -z "$proxy" ]; then
+        echo -e "${RED}프록시가 입력되지 않았습니다. 다음 프록시로 넘어갑니다.${NC}"
+        continue  
+    fi
+    
     echo -e "${YELLOW}프록시: ${proxy}를 사용하여 식별코드를 얻으세요:${NC}"
     echo -e "${YELLOW}해당 사이트에 방문하여 식별코드를 얻으세요: ${NC}"
     echo -e "${YELLOW}https://titannet.gitbook.io/titan-network-en/resource-network-test/bind-the-identity-code${NC}"
@@ -68,8 +73,7 @@ while IFS= read -r proxy; do
     # 10. 데몬 시작
     echo -e "${YELLOW}titan-edge 데몬을 시작합니다...${NC}"
     titan-edge daemon start --init --url https://cassini-locator.titannet.io:5000/rpc/v0 --proxy="$proxy"
-
-done < "$PROXY_FILE"
+done
 
 echo -e "${GREEN}모든 작업이 완료되었습니다. 컨트롤+A+D로 스크린을 종료해주세요.${NC}"
 echo -e "${GREEN}스크립트 작성자: https://t.me/kjkresearch${NC}"
