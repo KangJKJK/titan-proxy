@@ -9,9 +9,41 @@ NC='\033[0m' # 색상 초기화
 # 변수 정의
 PACKAGE_NAME="titan-edge_v0.1.20_246b9dd_linux-amd64.tar.gz"
 DIR_NAME="titan-edge_v0.1.20_246b9dd_linux-amd64"
-PROXY_FILE="proxy.txt"
+PROXY_FILE="$DIR_NAME/proxy.txt"  # DIR_NAME에 저장
 
-# 1. 프록시 목록 사용자 입력
+# 1. 기존 패키지 삭제
+if [ -f "$PACKAGE_NAME" ]; then
+    echo -e "${YELLOW}기존 패키지를 삭제합니다...${NC}"
+    rm -f "$PACKAGE_NAME"
+fi
+
+# 2. 패키지 다운로드
+echo -e "${YELLOW}패키지를 다운로드합니다...${NC}"
+wget https://github.com/Titannet-dao/titan-node/releases/download/v0.1.20/titan-edge_v0.1.20_246b9dd_linux-amd64.tar.gz
+
+# 3. 다운로드한 파일 압축 해제
+echo -e "${YELLOW}패키지를 추출합니다...${NC}"
+tar -xzvf "$PACKAGE_NAME"
+
+# 4. 작업 폴더로 이동
+cd "$DIR_NAME" || { echo -e "${RED}디렉토리로 이동 실패${NC}"; exit 1; }
+
+# 5. 기존 작업 디렉토리 삭제
+if [ -d "$DIR_NAME" ]; then
+    echo -e "${YELLOW}기존 작업 디렉토리를 삭제합니다...${NC}"
+    rm -rf "$DIR_NAME"
+fi
+
+# 6. 권한 설정 및 파일 복사
+echo -e "${YELLOW}파일을 복사합니다...${NC}"
+sudo cp titan-edge /usr/local/bin
+sudo cp libgoworkerd.so /usr/local/lib
+
+# 7. 환경 변수 설정
+echo -e "${YELLOW}환경 변수를 설정합니다...${NC}"
+export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/local/lib
+
+# 8. 프록시 목록 사용자 입력
 echo -e "${YELLOW}보유하신 모든 Proxy를 chatgpt에게 다음과 같은 형식으로 변환해달라고 하세요.${NC}"
 echo -e "${YELLOW}이러한 형태로 각 프록시를 한줄에 하나씩 입력하세요: http://username:password@proxy_host:port${NC}"
 echo -e "${YELLOW}프록시 입력 후 엔터를 두번 누르면 됩니다.${NC}"
@@ -23,41 +55,8 @@ while true; do
     if [ -z "$proxy" ]; then
         break
     fi
-    echo "$proxy" >> proxy.txt
+    echo "$proxy" >> "$PROXY_FILE"  # DIR_NAME 내에 저장
 done
-
-
-# 2. 기존 작업 디렉토리 삭제
-if [ -d "$DIR_NAME" ]; then
-    echo -e "${YELLOW}기존 작업 디렉토리를 삭제합니다...${NC}"
-    rm -rf "$DIR_NAME"
-fi
-
-# 3. 기존 패키지 삭제
-if [ -f "$PACKAGE_NAME" ]; then
-    echo -e "${YELLOW}기존 패키지를 삭제합니다...${NC}"
-    rm -f "$PACKAGE_NAME"
-fi
-
-# 4. 패키지 다운로드
-echo -e "${YELLOW}패키지를 다운로드합니다...${NC}"
-wget https://github.com/Titannet-dao/titan-node/releases/download/v0.1.20/titan-edge_v0.1.20_246b9dd_linux-amd64.tar.gz
-
-# 5. 다운로드한 파일 압축 해제
-echo -e "${YELLOW}패키지를 추출합니다...${NC}"
-tar -xzvf "$PACKAGE_NAME"
-
-# 6. 작업 폴더로 이동
-cd "$DIR_NAME" || { echo -e "${RED}디렉토리로 이동 실패${NC}"; exit 1; }
-
-# 7. 권한 설정 및 파일 복사
-echo -e "${YELLOW}파일을 복사합니다...${NC}"
-sudo cp titan-edge /usr/local/bin
-sudo cp libgoworkerd.so /usr/local/lib
-
-# 8. 환경 변수 설정
-echo -e "${YELLOW}환경 변수를 설정합니다...${NC}"
-export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/local/lib
 
 # 9. 프록시 목록 읽기
 while IFS= read -r proxy; do
@@ -78,4 +77,5 @@ while IFS= read -r proxy; do
 
 done < "$PROXY_FILE"
 
-echo -e "${GREEN}모든 프록시 작업이 완료되었습니다.${NC}"
+echo -e "${GREEN}모든 작업이 완료되었습니다. 컨트롤+A+D로 스크린을 종료해주세요.${NC}"
+echo -e "${GREEN}스크립트 작성자: https://t.me/kjkresearch${NC}"
