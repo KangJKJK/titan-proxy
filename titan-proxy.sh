@@ -58,6 +58,10 @@ for proxy in $(< proxy.txt); do
         echo -e "${RED}프록시가 입력되지 않았습니다. 다음 프록시로 넘어갑니다.${NC}"
         continue  
     fi
+
+    # 환경 변수로 프록시 설정
+    export http_proxy=$proxy
+    export https_proxy=$proxy
     
     echo -e "${YELLOW}프록시: ${proxy}를 사용하여 식별코드를 얻으세요:${NC}"
     echo -e "${YELLOW}해당 사이트에 방문하여 식별코드를 얻으세요: ${NC}"
@@ -68,11 +72,14 @@ for proxy in $(< proxy.txt); do
     
     # 9. 바인드 명령 실행
     echo -e "${YELLOW}바인드 명령을 실행합니다...${NC}"
-    titan-edge bind --hash="$identifier" https://api-test1.container1.titannet.io/api/v2/device/binding --proxy="$proxy"
+    titan-edge bind --hash="$identifier" https://api-test1.container1.titannet.io/api/v2/device/binding
     
     # 10. 데몬 시작
     echo -e "${YELLOW}titan-edge 데몬을 시작합니다...${NC}"
-    titan-edge daemon start --init --url https://cassini-locator.titannet.io:5000/rpc/v0 --proxy="$proxy"
+    titan-edge daemon start --init --url https://cassini-locator.titannet.io:5000/rpc/v0
+    
+    # 환경 변수 해제
+    unset http_proxy https_proxy
 done
 
 echo -e "${GREEN}모든 작업이 완료되었습니다. 컨트롤+A+D로 스크린을 종료해주세요.${NC}"
