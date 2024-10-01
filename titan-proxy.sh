@@ -9,7 +9,7 @@ NC='\033[0m' # 색상 초기화
 # 변수 정의
 PACKAGE_NAME="titan-edge_v0.1.20_246b9dd_linux-amd64.tar.gz"
 DIR_NAME="titan-edge_v0.1.20_246b9dd_linux-amd64"
-PROXY_FILE="$DIR_NAME/proxy.txt"  # proxy.txt 파일 경로
+PROXY_FILE="root/titan-edge_v0.1.20_246b9dd_linux-amd64/proxy.txt"  # proxy.txt 파일 경로
 
 # 1. 기존 패키지 삭제
 if [ -f "$PACKAGE_NAME" ]; then
