@@ -41,6 +41,8 @@ echo -e "${YELLOW}보유하신 모든 Proxy를 chatgpt에게 다음과 같은 �
 echo -e "${YELLOW}이러한 형태로 각 프록시를 한줄에 하나씩 입력하세요: http://username:password@proxy_host:port${NC}"
 echo -e "${YELLOW}프록시 입력 후 엔터를 두번 누르면 됩니다.${NC}"
 
+base_port=5000
+
 # 프록시 목록을 proxy.txt 파일에 저장
 > proxy.txt # 파일 초기화
 while true; do
@@ -58,7 +60,12 @@ for proxy in $(< proxy.txt); do
         echo -e "${RED}프록시가 입력되지 않았습니다. 다음 프록시로 넘어갑니다.${NC}"
         continue  
     fi
+    
+    # 각 데몬에 고유 포트 할당
+    current_port=$((base_port++))
 
+    echo -e "${YELLOW}프록시: ${proxy}를 사용하여 포트 ${current_port}에서 데몬을 실행합니다...${NC}"
+    
     # 환경 변수로 프록시 설정
     export http_proxy=$proxy
     export https_proxy=$proxy
@@ -76,7 +83,8 @@ for proxy in $(< proxy.txt); do
     
     # 10. 데몬 시작
     echo -e "${YELLOW}titan-edge 데몬을 시작합니다...${NC}"
-    titan-edge daemon start --init --url https://cassini-locator.titannet.io:5000/rpc/v0
+    titan-edge daemon start --init --url https://cassini-locator.titannet.io:${current_port}/rpc/v0 &
+    sudo ufw allow ${current_port}/tcp
     
     # 환경 변수 해제
     unset http_proxy https_proxy
