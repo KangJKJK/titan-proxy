@@ -49,7 +49,7 @@ while true; do
     if [ -z "$proxy" ]; then
         break
     fi
-    echo "$proxy" >> "$PROXY_FILE"  # DIR_NAME 내에 저장
+    echo "$proxy" >> "$DIR_NAME/$PROXY_FILE"
 done
 
 # 8. 프록시 목록 읽기
