@@ -68,7 +68,7 @@ for proxy in $(< proxy.txt); do
     
     # 9. 바인드 명령 실행
     echo -e "${YELLOW}바인드 명령을 실행합니다...${NC}"
-    titan-edge bind --hash="$identifier" https://api-test1.container1.titannet.io/api/v2/device/binding
+    titan-edge bind --hash="$identifier" https://api-test1.container1.titannet.io/api/v2/device/binding --proxy="$proxy"
     
     # 10. 데몬 시작
     echo -e "${YELLOW}titan-edge 데몬을 시작합니다...${NC}"
