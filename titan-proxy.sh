@@ -60,7 +60,11 @@ for proxy in $(< proxy.txt); do
         echo -e "${RED}프록시가 입력되지 않았습니다. 다음 프록시로 넘어갑니다.${NC}"
         continue  
     fi
-    
+
+    # 각 데몬에 고유 작업 디렉토리 생성 및 포트 할당
+    repo_dir="/root/titan-edge-workspace/$current_port"
+    mkdir -p "$repo_dir"
+
     # 각 데몬에 고유 포트 할당
     current_port=$((base_port++))
 
@@ -76,14 +80,14 @@ for proxy in $(< proxy.txt); do
     
     # 사용자로부터 식별 코드 입력 받기
     read -p "$(echo -e ${YELLOW}식별 코드를 입력하세요: ${NC})" identifier
-    
+
     # 9. 바인드 명령 실행
     echo -e "${YELLOW}바인드 명령을 실행합니다...${NC}"
-    titan-edge bind --hash="$identifier" https://api-test1.container1.titannet.io/api/v2/device/binding
+    titan-edge bind --hash="$identifier" https://api-test1.container1.titannet.io/api/v2/device/binding --repo "$repo_dir"
     
     # 10. 데몬 시작
     echo -e "${YELLOW}titan-edge 데몬을 시작합니다...${NC}"
-    titan-edge daemon start --init --url https://cassini-locator.titannet.io:${current_port}/rpc/v0 &
+    titan-edge daemon start --init --url https://cassini-locator.titannet.io:${current_port}/rpc/v0 --repo "$repo_dir" &
     sudo ufw allow ${current_port}/tcp
     
     # 환경 변수 해제
