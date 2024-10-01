@@ -61,7 +61,7 @@ for proxy in $(< proxy.txt); do
     
     echo -e "${YELLOW}프록시: ${proxy}를 사용하여 식별코드를 얻으세요:${NC}"
     echo -e "${YELLOW}해당 사이트에 방문하여 식별코드를 얻으세요: ${NC}"
-    echo -e "${YELLOW}https://titannet.gitbook.io/titan-network-en/resource-network-test/bind-the-identity-code${NC}"
+    echo -e "${YELLOW}https://test1.titannet.io/newoverview/activationcodemanagement${NC}"
     
     # 사용자로부터 식별 코드 입력 받기
     read -p "$(echo -e ${YELLOW}식별 코드를 입력하세요: ${NC})" identifier
