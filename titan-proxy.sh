@@ -17,12 +17,13 @@ echo -e "${YELLOW}프록시 목록을 입력하세요 (종료는 '끝' 입력):$
 # 프록시 목록을 proxy.txt 파일에 저장
 > "$PROXY_FILE" # 파일 초기화
 while true; do
-    read -p "$(echo -e ${YELLOW}프록시를 입력하세요: ${NC})" proxy
-    if [[ "$proxy" == "끝" ]]; then
+    read -r proxy
+    if [ -z "$proxy" ]; then
         break
     fi
-    echo "$proxy" >> "$PROXY_FILE"
+    echo "$proxy" >> proxy.txt
 done
+
 
 # 2. 기존 작업 디렉토리 삭제
 if [ -d "$DIR_NAME" ]; then
