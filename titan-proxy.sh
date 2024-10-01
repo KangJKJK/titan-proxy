@@ -9,7 +9,7 @@ NC='\033[0m' # 색상 초기화
 # 변수 정의
 PACKAGE_NAME="titan-edge_v0.1.20_246b9dd_linux-amd64.tar.gz"
 DIR_NAME="titan-edge_v0.1.20_246b9dd_linux-amd64"
-PROXY_FILE="proxy.txt"  # 기본 파일 이름
+PROXY_FILE="$DIR_NAME/proxy.txt"  # proxy.txt 파일 경로
 
 # 1. 기존 패키지 삭제
 if [ -f "$PACKAGE_NAME" ]; then
@@ -49,7 +49,7 @@ while true; do
     if [ -z "$proxy" ]; then
         break
     fi
-    echo "$proxy" >> "$DIR_NAME/$PROXY_FILE"
+    echo "$proxy" >> "$PROXY_FILE"  # DIR_NAME 내에 저장
 done
 
 # 8. 프록시 목록 읽기
